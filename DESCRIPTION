@@ -1,0 +1,36 @@
+Package: dbiutils
+Title: Lightweight Utilities for DBI Workflows
+Version: 0.1.0
+Authors@R:
+    person(given = "Tony", family = "Chemit", role = c("aut", "cre"),
+           email = "tchemit@users.noreply.github.com")
+Description: Provides small, driver-independent helpers for common database
+    workflows built on top of the 'DBI' package. It supports executing queries
+    as 'data.table' objects, safely managing short-lived connections supplied
+    by application code, and reading SQL statements from UTF-8 files.
+License: LGPL-2.1
+URL: https://ultreia-io.github.io/dbiutils/,
+    https://github.com/ultreia-io/dbiutils
+BugReports: https://github.com/ultreia-io/dbiutils/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.0.0)
+Imports:
+    data.table,
+    DBI
+Suggests:
+    knitr,
+    rmarkdown,
+    RSQLite,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Config/Needs/coverage:
+    covr,
+    DT,
+    htmltools,
+    xml2
+Config/Needs/website:
+    pkgdown
+Config/roxygen2/version: 8.1.0
