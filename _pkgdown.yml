@@ -1,0 +1,53 @@
+url: https://ultreia-io.github.io/dbiutils/
+
+template:
+  bootstrap: 5
+  light-switch: true
+
+reference:
+  - title: Query helpers
+    desc: Execute DBI queries and load SQL statements from files.
+  - contents:
+      - db_query
+      - read_sql_file
+  - title: Connection lifecycle
+    desc: Safely use short-lived connections owned by a provider.
+  - contents:
+      - with_db_connection
+
+articles:
+  - title: Get started
+    navbar: ~
+    contents:
+      - dbiutils
+
+home:
+  sidebar:
+    structure: [license, citation, authors, dev]
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news, community]
+    right: [coverage, search, github, lightswitch]
+  components:
+    community:
+      text: Community
+      menu:
+        - text: Contributing guide
+          href: CONTRIBUTING.html
+        - text: Maintainer guide
+          href: DEVELOPMENT.html
+        - text: Security policy
+          href: SECURITY.html
+        - text: Code of conduct
+          href: CODE_OF_CONDUCT.html
+        - text: "---------"
+        - text: Feature request
+          href: https://github.com/ultreia-io/dbiutils/issues/new?template=feature-request.yml
+        - text: Report a bug
+          href: https://github.com/ultreia-io/dbiutils/issues/new?template=bug-report.yml
+        - text: Report a vulnerability
+          href: https://github.com/ultreia-io/dbiutils/security/advisories/new
+    coverage:
+      text: Coverage
+      href: https://app.codecov.io/gh/ultreia-io/dbiutils/tree/develop
