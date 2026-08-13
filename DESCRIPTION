@@ -1,6 +1,6 @@
 Package: dbiutils
 Title: Lightweight Utilities for DBI Workflows
-Version: 0.1.0
+Version: 0.1.1
 Authors@R:
     person(given = "Tony", family = "Chemit", role = c("aut", "cre"),
            email = "tchemit@users.noreply.github.com")

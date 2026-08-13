@@ -4,10 +4,7 @@
 # dbiutils
 
 **Production (`main`)**
-[![Build](https://github.com/ultreia-io/dbiutils/actions/workflows/Build.yaml/badge.svg?branch=main)](https://github.com/ultreia-io/dbiutils/actions/workflows/Build.yaml?query=branch%3Amain)
-[![Test](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml/badge.svg?branch=main)](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml?query=branch%3Amain)
 [![Codecov](https://codecov.io/gh/ultreia-io/dbiutils/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ultreia-io/dbiutils/tree/main)
-[![Website](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml/badge.svg)](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml)
 [![Latest
 release](https://img.shields.io/github/v/release/ultreia-io/dbiutils?display_name=tag&sort=semver)](https://github.com/ultreia-io/dbiutils/releases/latest)
 
@@ -16,6 +13,7 @@ release](https://img.shields.io/github/v/release/ultreia-io/dbiutils?display_nam
 [![Test](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml/badge.svg?branch=develop)](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml?query=branch%3Adevelop)
 [![Codecov](https://codecov.io/gh/ultreia-io/dbiutils/branch/develop/graph/badge.svg)](https://app.codecov.io/gh/ultreia-io/dbiutils/tree/develop)
 
+[![Website](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml/badge.svg)](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml)
 [![License](https://img.shields.io/github/license/ultreia-io/dbiutils)](https://github.com/ultreia-io/dbiutils/blob/main/LICENSE)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
