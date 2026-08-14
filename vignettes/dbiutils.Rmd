@@ -17,15 +17,58 @@ knitr::opts_chunk$set(
 )
 ```
 
-`dbiutils` provides three small helpers that remain independent of the DBI
+`dbiutils` provides four small helpers that remain independent of the DBI
 backend selected by an application:
 
+- `db_connect_from_yaml()` opens a connection using YAML configuration;
 - `db_query()` executes a query and returns a `data.table`;
 - `with_db_connection()` scopes the lifecycle of a short-lived connection;
 - `read_sql_file()` loads a SQL statement from an explicitly located file.
 
 This vignette uses an in-memory SQLite database, but the same helpers work with
 `RPostgres`, `odbc`, and other DBI-compatible backends.
+
+## Connect using YAML configuration
+
+Connection arguments can be stored in an application-owned YAML file. The
+top-level keys are passed by name to `DBI::dbConnect()`, so they remain specific
+to the selected backend. Use `!env` for secrets, for example
+`password: !env APPLICATION_DB_PASSWORD`; the environment variable is resolved
+when the YAML file is read and its value is never stored in the configuration.
+
+For local development, `keyring` can store the password in the operating
+system credential store. Register it once using an interactive prompt:
+
+```{r keyring-register, eval = FALSE}
+install.packages("keyring")
+keyring::key_set("application-db")
+```
+
+At the beginning of each R session, copy the retrieved secret into the
+environment variable named by the YAML file:
+
+```{r keyring-load, eval = FALSE}
+Sys.setenv(
+  APPLICATION_DB_PASSWORD = keyring::key_get("application-db")
+)
+```
+
+`db_connect_from_yaml()` resolves `!env` immediately before calling
+`DBI::dbConnect()`. Remove the process variable after the database work is
+complete with `Sys.unsetenv("APPLICATION_DB_PASSWORD")`. The key remains in the
+operating system credential store for later sessions. CI and production should
+provide the same environment variable through their secret manager.
+
+```{r yaml-connection}
+library(dbiutils)
+
+config_file <- tempfile(fileext = ".yaml")
+writeLines("dbname: ':memory:'", config_file, useBytes = TRUE)
+
+connection <- db_connect_from_yaml(RSQLite::SQLite(), config_file)
+DBI::dbIsValid(connection)
+DBI::dbDisconnect(connection)
+```
 
 ## Manage a short-lived connection
 
@@ -35,8 +78,6 @@ that it is disconnected after the callback completes, including when the
 callback raises an error.
 
 ```{r connection}
-library(dbiutils)
-
 sqlite_connection <- function() {
   DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 }
@@ -117,6 +158,6 @@ sql <- read_sql_file(sql_path)
 
 ## Backend responsibility
 
-`dbiutils` imports `DBI` and `data.table` but intentionally imports no database
-driver. The consuming application remains responsible for installing,
+`dbiutils` imports `DBI`, `data.table`, and `yaml` but intentionally imports no
+database driver. The consuming application remains responsible for installing,
 configuring, and authenticating its selected backend.

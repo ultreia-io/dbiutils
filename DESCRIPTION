@@ -7,7 +7,8 @@ Authors@R:
 Description: Provides small, driver-independent helpers for common database
     workflows built on top of the 'DBI' package. It supports executing queries
     as 'data.table' objects, safely managing short-lived connections supplied
-    by application code, and reading SQL statements from UTF-8 files.
+    by application code, reading connection options from 'YAML' files, and
+    reading SQL statements from UTF-8 files.
 License: LGPL-2.1
 URL: https://ultreia-io.github.io/dbiutils/,
     https://github.com/ultreia-io/dbiutils
@@ -18,7 +19,8 @@ Depends:
     R (>= 4.0.0)
 Imports:
     data.table,
-    DBI
+    DBI,
+    yaml
 Suggests:
     knitr,
     rmarkdown,
