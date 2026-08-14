@@ -147,20 +147,6 @@ The package imports `DBI`, `data.table`, and `yaml`, but no database driver.
 Applications remain responsible for selecting and configuring `RPostgres`,
 `RSQLite`, `odbc`, or another DBI-compatible backend.
 
-## Relationship with db-schema-atlas
-
-The `db-schema-atlas` project can replace its original helpers as follows:
-
-| Original function  | `dbiutils` function    |
-| :----------------- | :--------------------- |
-| `query()`          | `db_query()`           |
-| `use_connection()` | `with_db_connection()` |
-| `read_sql()`       | `read_sql_file()`      |
-
-Unlike the original `read_sql()`, `read_sql_file()` receives the complete file
-path. Atlas should locate packaged SQL resources with `system.file()` and pass
-the resolved path to this function.
-
 ## Development
 
 From the package root, run:
