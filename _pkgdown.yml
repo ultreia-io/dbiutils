@@ -10,9 +10,10 @@ reference:
   - contents:
       - db_query
       - read_sql_file
-  - title: Connection lifecycle
-    desc: Safely use short-lived connections owned by a provider.
+  - title: Connections
+    desc: Create configured connections and safely manage their lifecycle.
   - contents:
+      - db_connect_from_yaml
       - with_db_connection
 
 articles:

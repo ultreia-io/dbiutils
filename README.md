@@ -4,10 +4,7 @@
 # dbiutils
 
 **Production (`main`)**
-[![Build](https://github.com/ultreia-io/dbiutils/actions/workflows/Build.yaml/badge.svg?branch=main)](https://github.com/ultreia-io/dbiutils/actions/workflows/Build.yaml?query=branch%3Amain)
-[![Test](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml/badge.svg?branch=main)](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml?query=branch%3Amain)
 [![Codecov](https://codecov.io/gh/ultreia-io/dbiutils/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ultreia-io/dbiutils/tree/main)
-[![Website](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml/badge.svg)](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml)
 [![Latest
 release](https://img.shields.io/github/v/release/ultreia-io/dbiutils?display_name=tag&sort=semver)](https://github.com/ultreia-io/dbiutils/releases/latest)
 
@@ -16,6 +13,7 @@ release](https://img.shields.io/github/v/release/ultreia-io/dbiutils?display_nam
 [![Test](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml/badge.svg?branch=develop)](https://github.com/ultreia-io/dbiutils/actions/workflows/Test.yaml?query=branch%3Adevelop)
 [![Codecov](https://codecov.io/gh/ultreia-io/dbiutils/branch/develop/graph/badge.svg)](https://app.codecov.io/gh/ultreia-io/dbiutils/tree/develop)
 
+[![Website](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml/badge.svg)](https://github.com/ultreia-io/dbiutils/actions/workflows/Website.yaml)
 [![License](https://img.shields.io/github/license/ultreia-io/dbiutils)](https://github.com/ultreia-io/dbiutils/blob/main/LICENSE)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -31,6 +29,7 @@ Package website: <https://ultreia-io.github.io/dbiutils/>
 
 - `db_query()` executes a parameterized query and returns a
   `data.table`.
+- `db_connect_from_yaml()` creates a connection from YAML configuration.
 - `with_db_connection()` safely manages a short-lived DBI connection.
 - `read_sql_file()` reads a SQL statement from an explicit UTF-8 file.
 - No database driver is imposed on applications using the package.
@@ -62,7 +61,68 @@ pak::pak("ultreia-io/dbiutils")
 
 ``` r
 library(dbiutils)
+```
 
+A connection can be configured in an application-owned YAML file:
+
+``` yaml
+host: localhost
+port: 5432
+dbname: application
+user: application
+password: !env APPLICATION_DB_PASSWORD
+client_encoding: UTF8
+```
+
+The `!env` tag resolves the value at connection time and fails if the
+named environment variable is not set. This keeps credentials out of
+project files and allows development, CI, and production to provide
+different secrets.
+
+### Store local passwords in the operating system keyring
+
+For local development, install the optional `keyring` package and
+register the password once. `key_set()` prompts securely, so the
+password is not typed into R code or recorded in `.Rhistory`:
+
+``` r
+install.packages("keyring")
+keyring::key_set("application-db")
+```
+
+At the beginning of each R session, retrieve the password and expose it
+under the name referenced by the YAML file:
+
+``` r
+Sys.setenv(
+  APPLICATION_DB_PASSWORD = keyring::key_get("application-db")
+)
+```
+
+The resulting flow is: operating system keyring → `key_get()` → process
+environment → `!env` → `DBI::dbConnect()`. The keyring entry persists
+between R sessions, while the environment variable exists only in the
+current R process. Remove it when the database work is complete:
+
+``` r
+Sys.unsetenv("APPLICATION_DB_PASSWORD")
+```
+
+Use `keyring::default_backend()` to inspect the active credential
+backend. In CI and production, inject the environment variable from the
+platform’s secret manager instead of using a local keyring. Do not place
+the literal password in YAML, `.Renviron`, R source code, or shell
+history.
+
+The application supplies its DBI driver when opening the connection:
+
+``` r
+postgres_connection <- function() {
+  db_connect_from_yaml(RPostgres::Postgres(), "database.yaml")
+}
+```
+
+``` r
 sqlite_connection <- function() {
   DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 }
@@ -86,24 +146,9 @@ SQL statements can be kept in separate files:
 sql <- read_sql_file(file.path("sql", "find_numbers.sql"))
 ```
 
-The package imports `DBI` and `data.table`, but no database driver.
-Applications remain responsible for selecting and configuring
+The package imports `DBI`, `data.table`, and `yaml`, but no database
+driver. Applications remain responsible for selecting and configuring
 `RPostgres`, `RSQLite`, `odbc`, or another DBI-compatible backend.
-
-## Relationship with db-schema-atlas
-
-The `db-schema-atlas` project can replace its original helpers as
-follows:
-
-| Original function  | `dbiutils` function    |
-|:-------------------|:-----------------------|
-| `query()`          | `db_query()`           |
-| `use_connection()` | `with_db_connection()` |
-| `read_sql()`       | `read_sql_file()`      |
-
-Unlike the original `read_sql()`, `read_sql_file()` receives the
-complete file path. Atlas should locate packaged SQL resources with
-`system.file()` and pass the resolved path to this function.
 
 ## Development
 
